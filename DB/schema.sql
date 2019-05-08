@@ -9,7 +9,6 @@ create schema rtm_private;
 create table rtm.user (
   id               serial primary key,
   first_name       text not null check (char_length(first_name) < 80),
-  last_name        text check (char_length(last_name) < 80),
   about            text,
   created_at       timestamp default now()
 );
@@ -17,7 +16,6 @@ create table rtm.user (
 comment on table rtm.user is 'A User';
 comment on column rtm.user.id is 'The primary unique identifier for the user.';
 comment on column rtm.user.first_name is 'The user’s first name.';
-comment on column rtm.user.last_name is 'The user’s last name.';
 comment on column rtm.user.about is 'A short description about the user, written by the user.';
 comment on column rtm.user.created_at is 'The time this user was created.';
 
@@ -34,7 +32,7 @@ comment on column rtm_private.account.password_hash is 'The hashed password of t
 
 create extension if not exists "pgcrypto";
 
-create function rtm.register_person (
+create function rtm.register_user (
     first_name text,
     email text,
     password text
@@ -42,8 +40,8 @@ create function rtm.register_person (
 declare
   person rtm.user;
 begin
-  insert into rtm.user (first_name) values
-    (first_name)
+  insert into rtm.user (first_name, created_at) values
+    (first_name, now())
     returning * into person;
 
   insert into rtm_private.account (user_id, email, password_hash) values 
@@ -53,4 +51,48 @@ begin
 end;
 $$ language plpgsql strict security definer;
 
+comment on function rtm.register_user(text, text, text) is 'Registers a single user';
+
+create role rtm_user login password 'xyz';
+create role rtm_anonymous;
+grant rtm_anonymous to rtm_user;
+
+create role rtm_person;
+grant rtm_person to rtm_user;
+
+create type rtm.jwt_token as (
+  role text,
+  user_id integer
+);
+
+create function rtm.authenticate(
+  email text,
+  password text
+) returns rtm.jwt_token as $$
+  select('rtm_user', user_id)::rtm.jwt_token
+    from rtm_private.account
+    where
+      account.email = $1
+      and account.password_hash = crypt($2, account.password_hash);
+$$ language sql strict security definer;
+
+comment on function rtm.authenticate(text, text) is 'Creates a JWT token that will securely identify a person and give them certain permissions.';
+
+create function rtm.current_user() returns rtm.user as $$
+  select *
+  from rtm.user
+  where id = current_setting('jwt.claims.user_id')::integer
+$$ language sql stable;
+
+comment on function rtm.current_user() is 'Gets the user who was identified by our JWT.';
+
+grant usage on schema rtm to rtm_anonymous, rtm_person;
+
+
+grant select, update, delete on table rtm.user to rtm_person;
+
+grant execute on function rtm.authenticate(text, text) to rtm_anonymous, rtm_person;
+grant execute on function rtm.current_user() to rtm_anonymous, rtm_person;
+
+grant execute on function rtm.register_user(text, text, text) to rtm_anonymous;
 commit;
