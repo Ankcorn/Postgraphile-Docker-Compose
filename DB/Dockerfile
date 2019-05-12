@@ -1,2 +1,2 @@
-FROM postgres
-COPY schema.sql /docker-entrypoint-initdb.d/
+FROM debezium/postgres:11-alpine
+COPY ./schema-start.sql /docker-entrypoint-initdb.d/schema.sql

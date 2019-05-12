@@ -6,6 +6,28 @@ drop schema if exists rtm_private;
 create schema rtm;
 create schema rtm_private;
 
+create role rtm_user login password 'xyz';
+create role rtm_anonymous;
+grant rtm_anonymous to rtm_user;
+
+create role rtm_person;
+grant rtm_person to rtm_user;
+
+create table rtm.meetup (
+  id               serial primary key,
+  title            text not null check (char_length(title) < 80),
+  about            text,
+  post_code        text,
+  date_time        timestamp
+);
+
+comment on table rtm.meetup is 'A Meetup';
+comment on column rtm.meetup.id is 'The primary unique identifier for the meetup.';
+comment on column rtm.meetup.title is 'The meetups name.';
+comment on column rtm.meetup.about is 'A short description about the meetup.';
+comment on column rtm.meetup.created_at is 'The time this meetup was created.';
+
+
 create table rtm.user (
   id               serial primary key,
   first_name       text not null check (char_length(first_name) < 80),
@@ -53,12 +75,6 @@ $$ language plpgsql strict security definer;
 
 comment on function rtm.register_user(text, text, text) is 'Registers a single user';
 
-create role rtm_user login password 'xyz';
-create role rtm_anonymous;
-grant rtm_anonymous to rtm_user;
-
-create role rtm_person;
-grant rtm_person to rtm_user;
 
 create type rtm.jwt_token as (
   role text,
@@ -90,6 +106,7 @@ grant usage on schema rtm to rtm_anonymous, rtm_person;
 
 
 grant select, update, delete on table rtm.user to rtm_person;
+grant select, update, insert, delete on table rtm.meetup to rtm_anonymous, rtm_person;
 
 grant execute on function rtm.authenticate(text, text) to rtm_anonymous, rtm_person;
 grant execute on function rtm.current_user() to rtm_anonymous, rtm_person;

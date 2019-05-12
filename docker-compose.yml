@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    container_name: psql
+    image: psql
+    build:
+      context: ./DB
+    env_file:
+        - ./.env
+    ports:
+      - 5432:5432
+    command: ["postgres", "-c", "wal_level=logical"]
+    
+  graphql:
+    container_name: my-graphql
+    image: postgraphile
+    build:
+      context: ./postgraphile
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    ports:
+      - 5433:5433
+    # command: ["postgraphile", "--enhance-graphiql", "--connection", "${OWNER_DATABASE_URL}", "--port", "5433", "--schema", "rtm"]
+    command: ["postgraphile", "--enhance-graphiql", "--live", "--connection", "${OWNER_DATABASE_URL}", "--port", "5433", "--owner-connection", "${OWNER_DATABASE_URL}", "--schema", "rtm","--append-plugins", "@graphile/subscriptions-lds"]
+    # command: ["postgraphile", "--enhance-graphiql", "--live", "--connection", "${DATABASE_URL}", "--port", "5433", "--owner-connection", "${OWNER_DATABASE_URL}", "--schema", "rtm", "--token", "rtm.jwt_token", "--default-role", "rtm_anonymous", "--secret", "${JWT_SECRET}", "--append-plugins", "@graphile/subscriptions-lds"]
