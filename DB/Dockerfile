@@ -1,2 +1,2 @@
 FROM debezium/postgres:11-alpine
-COPY ./schema-start.sql /docker-entrypoint-initdb.d/schema.sql
+COPY ./talk.sql /docker-entrypoint-initdb.d/schema.sql
