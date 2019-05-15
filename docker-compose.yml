@@ -22,6 +22,6 @@ services:
       - db
     ports:
       - 5433:5433
-    command: ["postgraphile", "--enhance-graphiql", "--connection", "${OWNER_DATABASE_URL}", "--port", "5433", "--schema", "rtm"]
+    # command: ["postgraphile", "--enhance-graphiql", "--connection", "${OWNER_DATABASE_URL}", "--port", "5433", "--schema", "rtm"]
     # command: ["postgraphile", "--enhance-graphiql", "--live", "--connection", "${OWNER_DATABASE_URL}", "--port", "5433", "--owner-connection", "${OWNER_DATABASE_URL}", "--schema", "rtm","--append-plugins", "@graphile/subscriptions-lds"]
-    # command: ["postgraphile", "--enhance-graphiql", "--live", "--connection", "${DATABASE_URL}", "--port", "5433", "--owner-connection", "${OWNER_DATABASE_URL}", "--schema", "rtm", "--token", "rtm.jwt_token", "--default-role", "rtm_anonymous", "--secret", "${JWT_SECRET}", "--append-plugins", "@graphile/subscriptions-lds"]
+    command: ["postgraphile", "--enhance-graphiql", "--live", "--connection", "${DATABASE_URL}", "--port", "5433", "--owner-connection", "${OWNER_DATABASE_URL}", "--schema", "rtm", "--token", "rtm.jwt_token", "--default-role", "rtm_anonymous", "--secret", "${JWT_SECRET}", "--append-plugins", "@graphile/subscriptions-lds"]
