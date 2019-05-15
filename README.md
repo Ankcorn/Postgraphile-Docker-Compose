@@ -5,6 +5,8 @@ This is the accompanying repo for [this](https://www.meetup.com/MancJS/events/26
 * Docker
 * [Postgraphile](https://www.graphile.org/postgraphile/)
 
+The slides are hosted on netlify https://postgraphile-at-mancjs.netlify.com
+
 ## Installation
 
 All you need to get started is to have docker installed on your machine. Then you can simply run
