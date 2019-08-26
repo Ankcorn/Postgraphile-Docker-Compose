@@ -4,4 +4,4 @@ LABEL description="Instant high-performance GraphQL API for your PostgreSQL data
 RUN npm install -g postgraphile @graphile/subscriptions-lds
 
 EXPOSE 5000
-ENTRYPOINT ["postgraphile", "-n", "0.0.0.0"]
+ENTRYPOINT ["postgraphile"]
