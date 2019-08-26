@@ -13,8 +13,8 @@ to build very fast graphql api with no server side code. Once you have installed
 
 
 ```sh
-git clone https://github.com/Ankcorn/MancJS-Talk.git
-cd MancJS-Talk
+git clone https://github.com/Ankcorn/Postgraphile-Docker-Compose.git
+cd Postgraphile-Docker-Compose
 docker-compose up
 ```
 
