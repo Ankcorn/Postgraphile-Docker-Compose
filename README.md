@@ -1,15 +1,16 @@
-# Rate The Meetup
-This is the accompanying repo for [this](https://www.meetup.com/MancJS/events/261281331/) meetup. Its a graphql based Meetup Rating App. It uses:
+# Postgraphile Docker Compose Playground
+Prototyping apps can sometimes be tricky. This project helps to quickly try out ideas when building a graphql api.
+
+It combines:
 
 * PostgreSQL
-* Docker
+* Docker Compose
 * [Postgraphile](https://www.graphile.org/postgraphile/)
 
-The slides are hosted on netlify https://postgraphile-at-mancjs.netlify.com
+to build very fast graphql api with no server side code. Once you have installed PostgreSQL, and Docker Compose.
 
-## Installation
+## Getting started
 
-All you need to get started is to have docker installed on your machine. Then you can simply run
 
 ```sh
 git clone https://github.com/Ankcorn/MancJS-Talk.git
@@ -21,9 +22,5 @@ If you are having issues with the schema not updating run
 
 `docker-compose down && docker-compose up --build`
 
-## Projects structure
-
-* db - contains db Dockerfile and talk.sql file
-* postgraphile - contains postgraphile Dockerfile with the live query plugin installed
 
 Contributions are welcome
