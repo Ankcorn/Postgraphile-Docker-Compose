@@ -89,7 +89,17 @@ create table app.group (
 );
 
 grant select on table app.group to app_anonymous;
+grant insert, select, update, delete on table app.group to app_person;
 
+create policy update_group on app.group for update to app_person
+  using (owner = current_setting('jwt.claims.user_id', true)::integer);
+
+create policy delete_group on app.group for delete to app_person
+  using (id = current_setting('jwt.claims.user_id', true)::integer);
+
+/** 
+  Todo: Permissions and functions for events + organisers
+*/
 CREATE TABLE app.event (
 	id serial PRIMARY KEY,
 	title text NOT NULL,
@@ -101,6 +111,7 @@ CREATE TABLE app.event (
 );
 
 grant select on table app.event to app_anonymous;
+grant insert, select, update, delete on table app.event to app_person;
 
 CREATE TABLE app.organiser (
 	id serial PRIMARY KEY,
@@ -109,6 +120,7 @@ CREATE TABLE app.organiser (
 );
 
 grant select on table app.organiser to app_anonymous;
+grant insert, select, update, delete on table app.organiser to app_person;
 
 CREATE TABLE app.comment (
 	id serial PRIMARY KEY,
@@ -120,6 +132,13 @@ CREATE TABLE app.comment (
 );
 
 grant select on table app.comment to app_anonymous;
+grant insert, select, update, delete on table app.comment to app_person;
+
+create policy update_comment on app.comment for update to app_person
+  using (person = current_setting('jwt.claims.user_id', true)::integer);
+
+create policy delete_comment on app.comment for delete to app_person
+  using (person = current_setting('jwt.claims.user_id', true)::integer);
 
 create type app.status as enum (
   'Attending',
@@ -135,3 +154,4 @@ CREATE TABLE app.attending (
 );
 
 grant select on table app.attending to app_anonymous;
+grant insert, select, update, delete on table app.attending to app_person;
