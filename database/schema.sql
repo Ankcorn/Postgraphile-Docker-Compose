@@ -91,6 +91,12 @@ create table app.group (
 grant select on table app.group to app_anonymous;
 grant insert, select, update, delete on table app.group to app_person;
 
+create policy create_group on app.group for insert to app_person
+  with check (true);
+
+create policy select_group on app.group for select to app_person
+  using (true);
+
 create policy update_group on app.group for update to app_person
   using (owner = current_setting('jwt.claims.user_id', true)::integer);
 
@@ -134,6 +140,12 @@ CREATE TABLE app.comment (
 grant select on table app.comment to app_anonymous;
 grant insert, select, update, delete on table app.comment to app_person;
 
+create policy create_comment on app.comment for insert to app_person
+   with check (true);
+
+create policy select_comment on app.comment for select to app_person
+  using (true);
+  
 create policy update_comment on app.comment for update to app_person
   using (person = current_setting('jwt.claims.user_id', true)::integer);
 
@@ -155,3 +167,19 @@ CREATE TABLE app.attending (
 
 grant select on table app.attending to app_anonymous;
 grant insert, select, update, delete on table app.attending to app_person;
+
+GRANT USAGE, SELECT ON SEQUENCE app.group_id_seq TO app_anonymous, app_user;
+GRANT USAGE, SELECT ON SEQUENCE app.organiser_id_seq TO app_anonymous, app_user;
+
+-- INSERT INTO app.user (id, first_name, about, created_at) VALUES ('1', 'Thomas', NULL, '2019-08-27 21:31:17.745455'),
+-- ('2', 'Not Thomas', NULL, '2019-08-27 21:31:32.579915'),
+-- ('3', 'Really Not Thomas', NULL, '2019-08-27 21:31:43.277847');
+
+-- ALTER SEQUENCE app.user
+-- 	RESTART WITH 4;
+
+-- INSERT INTO app_private.account ("user_id", "email", "password_hash")
+-- 		VALUES
+--       ('1', 'thomasankcorn@gmail.com', '$2a$06$7USR4TnqA/Rsi/XKjzIg0uycr.9uVOuV4/jQ6PQ30UWeBqInnrcOa'),
+--       ('2', 'ankcorn@gmail.com', '$2a$06$c/KRFxMuW6yi/FWQKhB1IebJU6c6X93j/sXLXgIPx4olw3bAaF1n6'),
+--       ('3', 'TAn@gmail.com', '$2a$06$XU1BoMJ4shV5NxBUoA4FcO6RGrCEAxkxh/HTDneJVv.FLCfnQhT/y');
