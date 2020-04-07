@@ -18,6 +18,7 @@ services:
       context: ./postgraphile
     env_file:
       - ./.env
+    restart: on-failure:5
     depends_on:
       - db
     ports:
